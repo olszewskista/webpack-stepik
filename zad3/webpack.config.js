@@ -1,8 +1,7 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
-const imageminMozjpeg = require('imagemin-mozjpeg');
+// const imageminMozjpeg = require('imagemin-mozjpeg');
 
 module.exports = {
     entry: './src/index.js',
@@ -33,9 +32,6 @@ module.exports = {
         ],
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: 'public/index.html',
-        }),
         new MiniCssExtractPlugin({
             filename: 'styles.css',
         }),
@@ -46,10 +42,15 @@ module.exports = {
                 quality: '75-90',
             },
             plugins: [
-                imageminMozjpeg({
-                    quality: 75,
-                    progressive: true,
-                }),
+                (async () => {
+                    const { default: imageminMozjpeg } = await import(
+                        'imagemin-mozjpeg'
+                    );
+                    return imageminMozjpeg({
+                        quality: 75,
+                        progressive: true,
+                    });
+                })(),
             ],
         }),
     ],
